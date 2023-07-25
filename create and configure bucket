@@ -1,0 +1,39 @@
+## Aws cli configuration is required to succeed
+## Create new bucket with unique name
+
+ aws s3api create-bucket --bucket vstorozhev-test --region eu-north-1 --create-bucket-configuration LocationConstraint=eu-north-1
+----------------------------------------------------------
+|                      CreateBucket                      |
++----------+---------------------------------------------+
+|  Location|  http://vstorozhev-test.s3.amazonaws.com/   |
++----------+---------------------------------------------+
+
+
+## Disable ACLs for bucket - to be added
+
+
+## Applying policy to bucket in order to make resources publicly available
+
+aws s3api put-bucket-policy --bucket vstorozhev-test --policy '{
+    "Version": "2012-10-17",
+    "Id": "Policy1",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::vstorozhev-test/*"
+        }
+    ]
+}'
+
+
+## Upload files to our bucket
+
+aws s3 cp Github/new.html/Hello_world.html s3://vstorozhev-test/
+aws s3 cp Github/new.html/style.css s3://vstorozhev-test/
+
+Public URL - https://vstorozhev-test.s3.amazonaws.com/Hello_world.html

@@ -1,0 +1,60 @@
+## Initiate cloudfront distro
+
+aws cloudfront create-distribution --origin-domain-name vstorozhev-test.s3.amazonaws.com --default-root-object Hello_world.html
+
+
+## Extract current config
+
+aws cloudfront get-distribution-config --output json --id E1W1X5HSGVF9OV
+
+
+## To enable caching we must add rules to 'CacheBehaviors' section, specifying TTL values, for instance:
+
+"CacheBehaviors": {
+  "Quantity": ,
+  "Items": [
+    {
+      "PathPattern": "*.html",
+      "TargetOriginId": "vstorozhev-test",
+      "ForwardedValues": {
+        "QueryString": false,
+        "Cookies": {
+          "Forward": "none"
+        },
+        "Headers": {
+          "Quantity": 0
+        },
+        "QueryStringCacheKeys": {
+          "Quantity": 0
+        }
+      },
+      "TrustedSigners": {
+        "Enabled": false,
+        "Quantity": 0
+      },
+      "ViewerProtocolPolicy": "allow-all",
+      "MinTTL": 0,
+      "AllowedMethods": {
+        "Quantity": 2,
+        "Items": [
+          "GET",
+          "HEAD"
+        ],
+        "CachedMethods": {
+          "Quantity": 2,
+          "Items": [
+            "GET",
+            "HEAD"
+          ]
+        }
+      },
+      "SmoothStreaming": false,
+      "DefaultTTL": 86400,
+      "MaxTTL": 31536000,
+      "Compress": true
+    },
+
+
+## In the end we need to push altered config to our distro
+
+ aws cloudfront update-distribution --id E1W1X5HSGVF9OV --distribution-config file://distribution-config.json
